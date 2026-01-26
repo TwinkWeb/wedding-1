@@ -3,29 +3,49 @@ import {
   Geist,
   Geist_Mono,
   Parisienne,
-  Dancing_Script,
+  Macondo,
+  Fleur_De_Leah,
+  Alex_Brush,
+  Raleway,
+  Oranienbaum,
+  Forum,
 } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
-
-const parisienne = Parisienne({
-  variable: "--font-parisienne",
-  subsets: ["latin"],
+const forum = Forum({
   weight: "400",
+  variable: "--forum",
+  subsets: ["latin"],
 });
 
-const dancingScript = Dancing_Script({
-  variable: "--font-fancy",
+const oranienbaum = Oranienbaum({
+  weight: "400",
+  variable: "--oranienbaum",
+  subsets: ["latin"],
+});
+
+const railway = Raleway({
+  weight: "400",
+  variable: "--railway",
+  subsets: ["latin"],
+});
+
+const fleurDeLeah = Fleur_De_Leah({
+  weight: "400",
+  variable: "--fleur-de-leah",
+  subsets: ["latin"],
+});
+
+const parsis = Macondo({
+  weight: "400",
+  variable: "--macondo",
+  subsets: ["latin"],
+});
+
+const brush = Alex_Brush({
+  weight: "400",
+  variable: "--alex_brush",
   subsets: ["latin"],
 });
 
@@ -45,7 +65,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${parisienne.variable} ${dancingScript.variable} antialiased`}
+        className={`${fleurDeLeah.variable} ${oranienbaum.variable} ${forum.variable} ${parsis.variable} ${brush.variable} ${railway.variable} antialiased`}
       >
         {children}
       </body>

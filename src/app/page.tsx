@@ -1,803 +1,1092 @@
 "use client";
 
-import Image from "next/image";
-import { Great_Vibes } from "next/font/google";
-import { useEffect, useRef, useState, forwardRef } from "react";
-import gsap from "gsap";
-import { ScrollToPlugin } from "gsap/ScrollToPlugin";
+import { ArrowIcon } from "./icons/arrow";
+import { Heart } from "./icons/heart";
+import React from "react";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { createClient } from "@supabase/supabase-js";
 
-gsap.registerPlugin(ScrollToPlugin);
-
-const greatVibes = Great_Vibes({
-  subsets: ["latin"],
-  weight: "400",
-});
+gsap.registerPlugin(ScrollTrigger);
 
 export default function Home() {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [isScrolling, setIsScrolling] = useState(false);
-  const [showSwipe, setShowSwipe] = useState(false);
-  const touchStartY = useRef(0);
-
-  useEffect(() => {
-    const handleWheel = (e: WheelEvent) => {
-      if (isScrolling) return;
-
-      e.preventDefault();
-      const delta = e.deltaY;
-      const currentScroll = window.scrollY;
-      const windowHeight = window.innerHeight;
-
-      if (Math.abs(delta) > 10) {
-        setIsScrolling(true);
-        setShowSwipe(false);
-        const targetSection =
-          delta > 0
-            ? Math.ceil(currentScroll / windowHeight)
-            : Math.floor(currentScroll / windowHeight);
-
-        gsap.to(window, {
-          scrollTo: targetSection * windowHeight,
-          duration: 0.8,
-          ease: "power2.inOut",
-          onComplete: () => {
-            setIsScrolling(false);
-            setShowSwipe(true);
-          },
-        });
-      }
-    };
-
-    const handleTouchStart = (e: TouchEvent) => {
-      touchStartY.current = e.touches[0].clientY;
-    };
-
-    const handleTouchEnd = (e: TouchEvent) => {
-      if (isScrolling) return;
-
-      const touchEndY = e.changedTouches[0].clientY;
-      const delta = touchStartY.current - touchEndY;
-      const currentScroll = window.scrollY;
-      const windowHeight = window.innerHeight;
-
-      if (Math.abs(delta) > 50) {
-        setIsScrolling(true);
-        setShowSwipe(false);
-        const targetSection =
-          delta > 0
-            ? Math.ceil(currentScroll / windowHeight)
-            : Math.floor(currentScroll / windowHeight);
-
-        gsap.to(window, {
-          scrollTo: targetSection * windowHeight,
-          duration: 0.8,
-          ease: "power2.inOut",
-          onComplete: () => {
-            setIsScrolling(false);
-            setShowSwipe(true);
-          },
-        });
-      }
-    };
-
-    window.addEventListener("wheel", handleWheel, { passive: false });
-    window.addEventListener("touchstart", handleTouchStart);
-    window.addEventListener("touchend", handleTouchEnd);
-
-    return () => {
-      window.removeEventListener("wheel", handleWheel);
-      window.removeEventListener("touchstart", handleTouchStart);
-      window.removeEventListener("touchend", handleTouchEnd);
-    };
-  }, [isScrolling]);
-
   return (
-    <div
-      ref={containerRef}
-      className="flex flex-col min-h-screen bg-zinc-50 font-sans"
-    >
-      <FirstSection
-        showSwipe={showSwipe}
-        onAnimationComplete={() => setShowSwipe(true)}
-      />
+    <div className="min-h-screen flex flex-col items-center justify-center bg-(--page-bg) ">
+      <FirstSection />
       <SecondSection />
       <ThirdSection />
       <FourthSection />
+      <FifthSection />
+      <TimerPart />
+      <Questionnaire />
+      {/* <div className="w-full fixed bottom-0 left-0 right-0 h-[20px] bg-(--text-clr-1)"></div> */}
     </div>
   );
 }
 
-function FourthSection() {
-  const videoRef = useRef<HTMLVideoElement>(null);
+function FirstSection() {
+  const firstName = React.useRef(null);
+  const lastName = React.useRef(null);
+  const andPart = React.useRef(null);
 
-  useEffect(() => {
-    if (videoRef.current) {
-      videoRef.current.play().catch((error) => {
-        console.log("Video autoplay failed:", error);
-      });
-    }
+  const imgPart = React.useRef(null);
+  const mobileImgPart = React.useRef(null);
+  const datePart = React.useRef(null);
+  const storyPart = React.useRef(null);
+  const buttonPart = React.useRef(null);
+
+  React.useEffect(() => {
+    if (!firstName.current || !lastName.current || !andPart.current) return;
+
+    gsap.fromTo(
+      firstName.current,
+      { opacity: 0, x: -100 },
+      { opacity: 1, x: 0, duration: 2, ease: "power2.out" },
+    );
+
+    gsap.fromTo(
+      lastName.current,
+      { opacity: 0, y: 100 },
+      { opacity: 1, y: 0, duration: 2, ease: "power2.out" },
+    );
+
+    gsap.fromTo(
+      andPart.current,
+      { opacity: 0, x: 200 },
+      { opacity: 1, x: 0, duration: 2, ease: "power2.out" },
+    );
+    gsap.fromTo(
+      imgPart.current,
+      { opacity: 0, y: 100 },
+      { opacity: 1, y: 0, duration: 2, ease: "power2.out" },
+    );
+    gsap.fromTo(
+      mobileImgPart.current,
+      { filter: " brightness(5) blur(10px)", y: 100 },
+      {
+        filter: " brightness(1) blur(0px)",
+        y: 0,
+        duration: 2,
+        ease: "power2.out",
+      },
+    );
+
+    gsap.fromTo(
+      datePart.current,
+      { opacity: 0, x: -100 },
+      { opacity: 1, x: 0, duration: 2, ease: "power2.out" },
+    );
+
+    gsap.fromTo(
+      storyPart.current,
+      { opacity: 0, y: 100 },
+      { opacity: 1, y: 0, duration: 2, ease: "power2.out" },
+    );
+    gsap.fromTo(
+      buttonPart.current,
+      { opacity: 0, y: 100 },
+      { opacity: 1, y: 0, duration: 2, ease: "power2.out" },
+    );
   }, []);
 
   return (
-    <div className="flex flex-col min-h-screen bg-zinc-50 font-sans py-4 px-2 gap-2">
-      <div
-        style={{
-          width: "100%",
-          height: "300px",
-          borderRadius: "8px",
-        }}
-      >
-        <video
-          ref={videoRef}
-          src="/saimon.MOV"
-          loop
-          muted
-          playsInline
-          style={{ width: "100%", height: "100%", objectFit: "cover" }}
+    <div className="w-full flex flex-col  justify-center items-center sm:min-h-screen relative overflow-hidden ">
+      <div className="flex flex-col bg-(--mobile-bg) py-[30px] relative sm:hidden">
+        <div
+          style={{
+            background:
+              " linear-gradient(180deg,var(--mobile-bg) 30%, rgba(237, 221, 83, 0) 100%)",
+          }}
+          className={"absolute top-0 left-0 w-full h-[45%] z-20"}
+        />
+        <img
+          ref={mobileImgPart}
+          src="/first_section.jpg"
+          className="w-auto  sm:hidden"
+        />
+        <div
+          style={{
+            background:
+              " linear-gradient(0deg,var(--mobile-bg) 30%, rgba(237, 221, 83, 0) 100%)",
+          }}
+          className={"absolute bottom-0 left-0 w-full h-[45%]"}
         />
       </div>
 
-      <div>
-        <p className={"text-center"} style={{ color: "black" }}>
-          Кот, прости меня, пожалуйста. Я не смог вовремя справиться со своими
-          переживаниями, поэтому создалось впечатление, что мне это безралично,
-          но это не так. Я очень переживаю из-за свадьбы, не потому что мне всё
-          равно, а потому что мне ОЧЕНЬ важно, чтобы всё было нормально и чтобы
-          мы ни в чём не страдали потом. Я переживаю из-за денег, чувствую
-          ответственность, и это так сильно на меня давит, что я просто
-          закрываюсь.Но я постараюсь исправиться! Прошу обратить внимание, что
-          Саймон сверху, это +100 к удаче!
-        </p>
+      <div className="flex flex-col max-sm:w-full max-sm:h-full gap-6 justify-between sm:justify-none items-center max-sm:absolute max-sm:top-0 max-sm:left-0 z-20   sm:py-0 py-[25px]">
+        <div
+          className="flex flex-col text-(--page-bg) sm:text-(--text-clr-1) text-[58px]  leading-none "
+          style={{ fontFamily: "var(--oranienbaum)" }}
+        >
+          <div ref={firstName} className="flex gap-4">
+            <p>ДМИТРИЙ</p> <p ref={andPart}>&</p>
+          </div>
+          <div ref={lastName} className="flex justify-center">
+            {" "}
+            <p>ОЛЬГА</p>
+          </div>
+        </div>
+        <img
+          ref={imgPart}
+          src="/first_section.jpg"
+          className="max-h-[449px] flex-1 w-auto hidden sm:block"
+        />
+        <div className="flex flex-col  w-full items-center gap-6">
+          <div className="flex flex-col text-end w-full text-(--page-bg) sm:text-(--text-clr-1) px-[15px] sm:px-0">
+            <p
+              ref={datePart}
+              className={"text-[30px] font-bold"}
+              style={{ fontFamily: "var(--alex_brush)" }}
+            >
+              02/05/2026
+            </p>
+
+            <p ref={storyPart} className={"text-[16px] font-bold leading-none"}>
+              Каждая история любви <br /> прекрасна, но <br /> наша - особенная.
+            </p>
+          </div>
+
+          <div
+            ref={buttonPart}
+            className="w-[40%] text-[14px] sm:text-[16px] sm:w-[50%] mt-1.5 flex items-center justify-center gap-3 sm:h-[50px] h-[30px]  rounded-[50%] border sm:border-(--text-clr-1) border-(--page-bg) sm:text-(--text-clr-1) text-(--page-bg)"
+          >
+            <p>листайте вниз</p>
+            <ArrowIcon />
+          </div>
+        </div>
       </div>
     </div>
   );
 }
 
 function SecondSection() {
-  const steps = [
-    { time: "12:30", title: "Церемония бракосочетания", Icon: ringsIcon },
-    { time: "13:30", title: "Фотосессия", Icon: cameraIcon },
-    { time: "15:30", title: "Начало банкета", Icon: plateIcon },
-    { time: "23:00", title: "Окончание празднования", Icon: clockIcon },
+  const refLetter = React.useRef<HTMLDivElement>(null);
+  const firstLetter = React.useRef<HTMLDivElement>(null);
+  const secondLetter = React.useRef<HTMLDivElement>(null);
+
+  const titleRef = React.useRef<HTMLDivElement>(null);
+  const letterToGuest = React.useRef<HTMLDivElement>(null);
+
+  const dateRef = React.useRef<HTMLDivElement>(null);
+
+  React.useEffect(() => {
+    if (
+      !refLetter.current ||
+      !firstLetter.current ||
+      !secondLetter.current ||
+      !titleRef.current
+    )
+      return;
+
+    gsap.set(titleRef.current, { opacity: 0, y: 100 });
+    gsap.set(letterToGuest.current, { opacity: 0, y: 100 });
+    gsap.set(dateRef.current, { opacity: 0, y: 100 });
+    gsap.set(firstLetter.current, { opacity: 0, x: 100 });
+    gsap.set(secondLetter.current, { opacity: 0, x: -100 });
+
+    gsap.to(firstLetter.current, {
+      opacity: 1,
+      x: 0,
+      duration: 2.5,
+      ease: "power2.out",
+      scrollTrigger: {
+        trigger: firstLetter.current,
+        start: "top 80%",
+        once: true,
+      },
+    });
+    gsap.to(secondLetter.current, {
+      opacity: 1,
+      x: 0,
+      duration: 2.5,
+      ease: "power2.out",
+      scrollTrigger: {
+        trigger: secondLetter.current,
+        start: "top 80%",
+        once: true,
+      },
+    });
+    gsap.to(titleRef.current, {
+      opacity: 1,
+      y: 0,
+      duration: 2.5,
+      ease: "power2.out",
+      scrollTrigger: {
+        trigger: titleRef.current,
+        start: "top 80%",
+        once: true,
+      },
+    });
+
+    gsap.to(dateRef.current, {
+      opacity: 1,
+      y: 0,
+      duration: 2.5,
+      ease: "power2.out",
+      scrollTrigger: {
+        trigger: dateRef.current,
+        start: "top 80%",
+        once: true,
+      },
+    });
+
+    gsap.to(letterToGuest.current, {
+      opacity: 1,
+      y: 0,
+      duration: 1.5,
+      ease: "power2.out",
+      scrollTrigger: {
+        trigger: letterToGuest.current,
+        start: "top 70%",
+        once: true,
+      },
+    });
+
+    gsap.to(refLetter.current, {
+      marginTop: 0,
+      ease: "none",
+      scrollTrigger: {
+        trigger: refLetter.current,
+        start: "top 75%",
+        end: "center 80%",
+        scrub: true,
+      },
+    });
+
+    return () => {
+      ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
+    };
+  }, []);
+
+  return (
+    <div className="w-full max-w-[1180px] max-sm:min-h-screen flex flex-col items-center gap-20 max-sm:gap-15 sm:pb-[80px] pb-[60px]">
+      <div
+        className="flex flex-col sm:flex-row justify-center text-[310px]  text-(--text-clr-1) max-sm:mt-[-30px] relative z-20"
+        style={{ fontFamily: "var(--forum)" }}
+      >
+        <p ref={firstLetter} className={"leading-[0.8]"}>
+          LO
+        </p>
+        <p ref={secondLetter} className={"leading-[0.8]"}>
+          VE
+        </p>
+      </div>
+
+      <p
+        ref={titleRef}
+        className=" font-bold text-[60px] text-center uppercase  max-sm:text-[40px] text-(--text-clr-1) leading-tight "
+        style={{
+          fontFamily: "var(--oranienbaum)",
+          fontWeight: 300,
+        }}
+      >
+        Дорогие наши <br /> друзья и родные!
+      </p>
+
+      <div
+        className="w-[450px] h-[450px] max-sm:w-[400px] max-sm:h-[400px] relative bg-center bg-no-repeat bg-cover flex items-center justify-center rotate-[-8deg]"
+        ref={letterToGuest}
+        style={{
+          backgroundImage: "url('/convert.webp')",
+        }}
+      >
+        <div
+          className="w-100% h-100%  bg-center bg-no-repeat bg-cover"
+          style={{
+            top: 0,
+            bottom: 0,
+            left: 0,
+            right: 0,
+            backgroundImage: "url('/front-convert.webp')",
+            position: "absolute",
+            zIndex: 10,
+          }}
+        />
+
+        <div
+          className="w-100% h-100%  bg-center bg-no-repeat bg-cover"
+          ref={refLetter}
+          style={{
+            top: 0,
+            bottom: 0,
+            left: 0,
+            right: 0,
+            marginTop: "100px",
+            backgroundImage: "url('/convert-paper.webp')",
+            position: "absolute",
+            zIndex: 5,
+          }}
+        >
+          <p
+            className={
+              "max-w-[210px] text-[14px] text-center text-(--text-clr-1) absolute top-[45%] left-1/2 transform -translate-x-1/2 -translate-y-1/2 leading-tight"
+            }
+          >
+            Если вы сейчас читаете этот текст, значит совсем скоро вы увидите
+            одного из нас в свадебном платье, и думаем, что вы догадываетесь,
+            кого именно :)
+          </p>
+        </div>
+      </div>
+
+      <div
+        className="flex items-center justify-center border-y border-(--text-clr-1) text-center relative w-[50%] max-sm:w-full"
+        style={{ fontFamily: "var(--oranienbaum)" }}
+        ref={dateRef}
+      >
+        <img
+          src={"/heart-image.png"}
+          className="absolute top-[50%] left-[50%] h-[180%] -translate-x-1/2 -translate-y-1/2"
+        />
+        <div className="flex flex-col flex-1">
+          <p className="text-[16px] text-(--text-clr-1) border-b border-(--text-clr-1) uppercase  py-[2px] font-100 ">
+            ПЯТНИЦА
+          </p>
+
+          <p className="text-[16px] text-(--text-clr-1)   py-[2px] font-bold ">
+            мая
+          </p>
+          <p className="text-[100px]  text-(--text-clr-1) leading-[1.1]   py-[2px] ">
+            1
+          </p>
+        </div>
+        <div className="flex flex-col flex-1 border-x border-(--text-clr-1)">
+          <p className="text-[16px] text-(--text-clr-1) border-b border-(--text-clr-1) uppercase  py-[2px]  font-100">
+            СУББОТА
+          </p>
+          <p className="text-[16px] text-(--text-clr-1)   py-[2px]  font-bold">
+            {" "}
+            мая
+          </p>
+          <p className="text-[100px]  text-(--text-clr-1) leading-[1.1]   py-[2px] ">
+            2
+          </p>
+        </div>
+        <div className="flex flex-col flex-1">
+          <p className="text-[16px] text-(--text-clr-1) border-b border-(--text-clr-1) uppercase  py-[2px]  font-100">
+            ВОСКРЕСЕНЬЕ
+          </p>
+          <p className="text-[16px] text-(--text-clr-1)   py-[2px]  font-bold">
+            {" "}
+            мая
+          </p>
+          <p className="text-[100px] text-(--text-clr-1) leading-[1.1]   py-[2px] ">
+            3
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+const ThirdSection = () => {
+  const locationTitle = React.useRef<HTMLDivElement>(null);
+  const information = React.useRef<HTMLDivElement>(null);
+
+  React.useEffect(() => {
+    if (!locationTitle.current || !information.current) return;
+
+    gsap.set(locationTitle.current, {
+      opacity: 0,
+      y: 100,
+      transform: "scale(0.8)",
+    });
+    gsap.set(information.current, {
+      opacity: 0,
+      y: 100,
+    });
+
+    gsap.to(information.current, {
+      opacity: 1,
+      y: 0,
+      duration: 1.5,
+      ease: "power2.out",
+      scrollTrigger: {
+        trigger: information.current,
+        start: "top 80%",
+        once: true,
+      },
+    });
+
+    gsap.to(locationTitle.current, {
+      opacity: 1,
+      y: 0,
+      duration: 1.5,
+      transform: "scale(1)",
+      ease: "power2.out",
+      scrollTrigger: {
+        trigger: locationTitle.current,
+        start: "top 80%",
+        once: true,
+      },
+    });
+
+    return () => {
+      // window.removeEventListener("scroll", handleScroll);
+      ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
+    };
+  }, []);
+
+  return (
+    <div className="w-full max-w-[580px] flex flex-col justify-center items-center ">
+      <div
+        className=" flex flex-col justify-center items-center w-full max-w-[800px] max-sm:w-[95vw]  gap-15 py-8"
+        style={{
+          backgroundColor: "rgba(251, 191, 197)",
+        }}
+      >
+        <div
+          ref={locationTitle}
+          className={
+            "flex flex-row uppercase max-sm:flex-col max-sm:text-center"
+          }
+          style={{ fontFamily: "var(--forum)" }}
+        >
+          <p className="text-[158px] text-(--text-clr-1) leading-none">Loca</p>
+          <p className="text-[158px] text-(--text-clr-1) leading-none">tion</p>
+        </div>
+        <div
+          ref={information}
+          className="flex flex-row justify-center items-stretch gap-7 max-sm:gap-5"
+        >
+          <div className="flex flex-col justify-between items-center gap-7 flex-1">
+            <p className="text-[16px] text-(--text-clr-1) text-center">
+              Москва ул. Ленинская Слобода,
+              <br /> 26, стр. 15
+            </p>
+
+            <a
+              href="https://yandex.ru/maps/213/moscow/house/ulitsa_leninskaya_sloboda_26s15/Z04YcAJhTEcOQFtvfXtxeXRnYg==/?indoorLevel=1&ll=37.651501%2C55.709050&z=18.92"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-[50%] min-w-[200px] max-sm:min-w-[150px] mt-1.5 flex items-center justify-center gap-3 h-[50px] rounded-[50%] border border-(--text-clr-1) text-(--text-clr-1) cursor-pointer transition-all duration-300 hover:bg-(--text-clr-1) hover:text-white"
+            >
+              <p>как добраться</p>
+            </a>
+          </div>
+          <div className="flex flex-col justify-between items-center gap-7 flex-1">
+            <p className="text-[16px] text-(--text-clr-1)">ЗАГС</p>
+
+            <a
+              href="https://yandex.ru/maps/213/moscow/house/ulitsa_leninskaya_sloboda_26s15/Z04YcAJhTEcOQFtvfXtxeXRnYg==/?indoorLevel=1&ll=37.651501%2C55.709050&z=18.92"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-[50%] min-w-[200px] max-sm:min-w-[150px] mt-1.5 flex items-center justify-center gap-3 h-[50px] rounded-[50%] border border-(--text-clr-1) text-(--text-clr-1) cursor-pointer transition-all duration-300 hover:bg-(--text-clr-1) hover:text-white"
+            >
+              <p>как добраться</p>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const FourthSection = () => {
+  const mainTitle = React.useRef(null);
+  const subTitle = React.useRef(null);
+  const firstPartOfTiming = React.useRef(null);
+  const secondPartOfTiming = React.useRef(null);
+
+  React.useEffect(() => {
+    if (!mainTitle.current || !subTitle.current) return;
+
+    gsap.set(mainTitle.current, {
+      opacity: 0,
+      y: 200,
+    });
+    gsap.set(subTitle.current, {
+      opacity: 0,
+      y: 100,
+    });
+    gsap.set(firstPartOfTiming.current, {
+      opacity: 0,
+      x: -100,
+    });
+    gsap.set(secondPartOfTiming.current, {
+      opacity: 0,
+      x: 100,
+    });
+
+    gsap.to(firstPartOfTiming.current, {
+      opacity: 1,
+      x: 0,
+      duration: 2,
+      ease: "power2.out",
+      scrollTrigger: {
+        trigger: firstPartOfTiming.current,
+        start: "top 90%",
+        once: true,
+      },
+    });
+
+    gsap.to(secondPartOfTiming.current, {
+      opacity: 1,
+      x: 0,
+      duration: 2,
+      ease: "power2.out",
+      scrollTrigger: {
+        trigger: secondPartOfTiming.current,
+        start: "top 90%",
+        once: true,
+      },
+    });
+
+    gsap.to(mainTitle.current, {
+      opacity: 1,
+      y: 0,
+      duration: 2,
+      transform: "scale(1)",
+      ease: "power2.out",
+      scrollTrigger: {
+        trigger: firstPartOfTiming.current,
+        start: "top 90%",
+        once: true,
+      },
+    });
+
+    gsap.to(subTitle.current, {
+      opacity: 1,
+      y: 0,
+      duration: 2,
+      transform: "scale(1)",
+      ease: "power2.out",
+      scrollTrigger: {
+        trigger: firstPartOfTiming.current,
+        start: "top 90%",
+        once: true,
+      },
+    });
+
+    return () => {
+      ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
+    };
+  }, []);
+
+  const maps = [
+    { id: 1, time: "12:45", text: () => <>Cбор гостей в загсе</> },
+    {
+      id: 2,
+      time: "13:00",
+      text: () => (
+        <span>
+          Начало церемонии <br /> регистрации
+        </span>
+      ),
+    },
+    { id: 3, time: "15:00", text: () => <>Фуршет</> },
+    { id: 4, time: "16:00", text: () => <>Банкет</> },
+    { id: 5, time: "23:00", text: () => <>Окончание вечера</> },
   ];
 
   return (
     <div
-      className="flex flex-col min-h-screen bg-zinc-50 font-sans relative justify-end"
-      style={{ backgroundColor: "#65694e" }}
+      className={"flex flex-col items-center w-full text-(--text-clr-1) py-5 "}
     >
-      <div
-        className="absolute top-[20px] right-0  w-[80%] h-[300px]"
-        style={{
-          borderTopLeftRadius: "30px",
-          borderBottomLeftRadius: "30px",
-          backgroundImage: "url('/second.jpg')",
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          backgroundRepeat: "no-repeat",
-        }}
-      />
-
-      <div
-        className="flex flex-col items-start justify-center gap-4 px-4"
-        style={{
-          width: "80vw",
-          height: "80vh",
-          position: "relative",
-          zIndex: 40,
-          backgroundColor: "#e9ddd3",
-          borderRadius: "50% 50% 0 0 / 20% 20% 0 0",
-        }}
+      <p
+        ref={mainTitle}
+        className="text-[64px] uppercase leading-tight"
+        style={{ fontFamily: "var(--forum)", fontWeight: 100 }}
       >
-        {steps.map((step, index) => (
+        Тайминг
+      </p>
+      <p
+        ref={subTitle}
+        className="text-[90px] leading-tight "
+        style={{ fontFamily: "var(--fleur-de-leah" }}
+      >
+        of the day
+      </p>
+      <div className="flex gap-10 max-sm:gap-15 mt-10 items-center max-sm:flex-col">
+        <div className="w-[95px] h-px bg-(--text-clr-1) max-sm:rotate-90" />
+        <div
+          className="flex gap-10 items-start max-sm:flex-col  max-sm:gap-4"
+          style={{ fontFamily: "var(--forum)" }}
+        >
           <div
-            key={index}
-            className="flex flex-row justify-start items-center columns-gap-2"
+            ref={firstPartOfTiming}
+            className={
+              "flex flex-row max-sm:flex-col gap-10  max-sm:gap-4  items-start max-sm:items-center max-sm:w-full"
+            }
           >
-            {step.Icon && <step.Icon />}
-            <div style={{ marginLeft: "15px" }} className="flex flex-col">
-              <p className="text font-bold" style={{ color: "#65694e" }}>
-                {step.time}
-              </p>
-              <p
-                className="text"
-                style={{ color: "#65694e", fontSize: "14px" }}
-              >
-                {step.title}
-              </p>
-            </div>
+            {maps.slice(0, 3).map((map) => (
+              <div key={map.id} className="flex flex-col items-center">
+                <p className="text-[32px]">{map.time}</p>
+                <p className="text-[18px] text-center font-light">
+                  {map.text()}
+                </p>
+              </div>
+            ))}
           </div>
-        ))}
+
+          <div
+            ref={secondPartOfTiming}
+            className={
+              "flex flex-row max-sm:flex-col gap-10 max-sm:gap-4 items-start max-sm:items-center max-sm:w-full"
+            }
+          >
+            {maps.slice(3).map((map) => (
+              <div key={map.id} className="flex flex-col items-center">
+                <p className="text-[32px]">{map.time}</p>
+                <p className="text-[18px] text-center font-light">
+                  {map.text()}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+        <div className="w-[95px] h-px bg-(--text-clr-1) max-sm:rotate-90" />
       </div>
     </div>
   );
-}
+};
 
-function FirstSection({
-  showSwipe,
-  onAnimationComplete,
-}: {
-  showSwipe: boolean;
-  onAnimationComplete: () => void;
-}) {
-  const titleRef = useRef<HTMLParagraphElement>(null);
-  const imageRef = useRef<HTMLDivElement>(null);
-  const namesRef = useRef<HTMLDivElement>(null);
-  const portraitRef = useRef<HTMLDivElement>(null);
-  const subtextRef = useRef<HTMLParagraphElement>(null);
+const colors = [
+  "#2A0306",
+  "#101F12",
+  "#ESE1C7",
+  "#899064",
+  "#D4B99D",
+  "#A16C56",
+];
 
-  useEffect(() => {
-    if (
-      titleRef.current &&
-      imageRef.current &&
-      namesRef.current &&
-      portraitRef.current &&
-      subtextRef.current
-    ) {
-      const text = "Приглашение на свадьбу";
-      titleRef.current.innerHTML = "";
+const FifthSection = () => {
+  const dressCode = React.useRef(null);
+  const descriptionDressCode = React.useRef(null);
+  const paletteRef = React.useRef(null);
 
-      const chars = text.split("").map((char) => {
-        const span = document.createElement("span");
-        span.textContent = char;
-        span.style.opacity = "0";
-        span.style.display = "inline-block";
-        // Preserve spaces
-        if (char === " ") {
-          span.style.width = "0.25em";
-        }
-        return span;
-      });
+  React.useEffect(() => {
+    if (!dressCode.current || !descriptionDressCode.current) return;
 
-      chars.forEach((char) => titleRef.current?.appendChild(char));
+    gsap.set(dressCode.current, {
+      opacity: 0,
+      y: 100,
+    });
+    gsap.set(descriptionDressCode.current, {
+      opacity: 0,
+      y: 100,
+    });
 
-      // Set initial state for image, names and portrait
-      gsap.set(namesRef.current, { y: -20 });
-      gsap.set(portraitRef.current, { y: 20 });
+    gsap.set(paletteRef.current, {
+      opacity: 0,
+      y: 100,
+    });
 
-      // Animate title letters
-      gsap.to(chars, {
-        opacity: 1,
-        duration: 0.05,
-        stagger: 0.05,
-        ease: "power2.inOut",
-        onComplete: () => {
-          // Animate image, names and portrait after title animation completes
+    gsap.to(dressCode.current, {
+      opacity: 1,
+      y: 0,
+      duration: 2,
+      ease: "power2.out",
+      scrollTrigger: {
+        trigger: dressCode.current,
+        start: "top 90%",
+        once: true,
+      },
+    });
 
-          gsap.to(namesRef.current, {
-            y: 0,
-            duration: 0.5,
-            ease: "power2.out",
-          });
-          gsap.to(imageRef.current, {
-            opacity: 1,
-            duration: 0.5,
-            ease: "power2.out",
-            onComplete: () => {
-              // Animate subtext after image appears
-              const subtextContent =
-                " С большой радостью приглашаем вас отпраздновать с нами день создания нашей семьи; ваше присутствие сделает этот момент ещё более особенным";
-              if (subtextRef.current) {
-                subtextRef.current.innerHTML = "";
+    gsap.to(paletteRef.current, {
+      opacity: 1,
+      y: 0,
+      duration: 2,
+      ease: "power2.out",
+      scrollTrigger: {
+        trigger: paletteRef.current,
+        start: "top 90%",
+        once: true,
+      },
+    });
 
-                const subtextChars = subtextContent.split("").map((char) => {
-                  const span = document.createElement("span");
-                  span.textContent = char;
-                  span.style.opacity = "0";
-                  span.style.display = "inline-block";
-                  if (char === " ") {
-                    span.style.width = "0.25em";
-                  }
-                  return span;
-                });
+    gsap.to(descriptionDressCode.current, {
+      opacity: 1,
+      y: 0,
+      duration: 2,
+      ease: "power2.out",
+      scrollTrigger: {
+        trigger: descriptionDressCode.current,
+        start: "top 90%",
+        once: true,
+      },
+    });
 
-                subtextChars.forEach((char) =>
-                  subtextRef.current?.appendChild(char)
-                );
-
-                gsap.to(subtextChars, {
-                  opacity: 1,
-                  duration: 0.03,
-                  stagger: 0.02,
-                  ease: "power2.inOut",
-                  onComplete: () => {
-                    // Call callback after all animations complete
-                    onAnimationComplete();
-                  },
-                });
-              }
-            },
-          });
-          gsap.to(portraitRef.current, {
-            y: 0,
-            duration: 0.5,
-            ease: "power2.out",
-          });
-        },
-      });
-    }
+    return () => {
+      ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
+    };
   }, []);
 
   return (
-    <div className="flex min-h-screen pt-4 pb-6 flex-col items-center justify-between relative">
-      <p
-        ref={titleRef}
-        className={`text-black text-4xl ${greatVibes.className} title`}
-      />
-
-      <div ref={imageRef} className="relative image" style={{ opacity: 0 }}>
-        <div
-          ref={namesRef}
-          className="absolute px-1 z-50 names"
-          style={{
-            width: "60px",
-            height: "100px",
-            backgroundColor: "#65694e",
-            left: "50%",
-            top: "-40px",
-            borderRadius: "15px",
-            transform: "translateX(-50%)",
-          }}
+    <div className="min-h-screen flex flex-col items-center justify-center text-(--text-clr-1)">
+      <div className={"relative"}>
+        <p
+          className="text-[720px]"
+          style={{ fontFamily: "var(--forum)", lineHeight: 1 }}
         >
-          <p
-            className="text-white text-center "
-            style={{
-              fontFamily: "var(--font-fancy)",
-
-              textAlign: "left",
-              fontSize: "2rem",
-            }}
-          >
-            D
-          </p>
-          <p
-            className="text-white text-center"
-            style={{
-              fontFamily: "var(--font-fancy)",
-              fontSize: "2rem",
-              marginTop: "-20px",
-            }}
-          >
-            &
-          </p>
-          <p
-            className="text-white text-center text-align-right"
-            style={{
-              fontFamily: "var(--font-fancy)",
-              fontSize: "2rem",
-              textAlignLast: "right",
-              marginTop: "-20px",
-            }}
-          >
-            O
-          </p>
-        </div>
-        <div
-          ref={portraitRef}
-          className="relative portrait"
-          style={{
-            borderTopLeftRadius: "43%",
-            borderTopRightRadius: "43%",
-            width: "90vw",
-
-            overflow: "hidden",
-          }}
+          D
+        </p>
+        <p
+          ref={dressCode}
+          className=" absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-[64px] uppercase"
+          style={{ fontFamily: "var(--forum)", lineHeight: 1 }}
         >
-          <div
-            className="absolute top-0 left-0 right-0 bottom-0 opacity-20"
-            style={{
-              backgroundColor: "white",
-            }}
-          />
-          <Image src="/ph.jpg" alt="rings" height={1000} width={800} />
-        </div>
+          Дресс- <br /> код
+        </p>
       </div>
-      <p
-        ref={subtextRef}
-        style={{ minHeight: "160px" }}
-        className={`text-black text-2xl px-4 text-center ${greatVibes.className} subtext`}
-      />
-
-      {/* Swipe indicator */}
-      {showSwipe && (
-        <div className="fixed bottom-0 left-1/2 transform -translate-x-1/2 flex flex-col items-center transition-opacity duration-300">
-          <p className={`text-black text-sm `}>Swipe</p>
-          <div className=" animate-bounce z-50">
-            <svg
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="text-black"
-            >
-              <polyline points="6 9 12 15 18 9"></polyline>
-            </svg>
-          </div>
-        </div>
-      )}
+      <p ref={descriptionDressCode} className="text-[18px] text-center">
+        Мы очень ждем и готовимся к нашему незабываемому <br /> дню! Поддержите
+        нас Вашими улыбками и объятиями, <br /> а также красивыми нарядами в
+        палитре мероприятия.
+      </p>
+      <div ref={paletteRef} className="flex gap-6 mt-10 max-w-[300px]">
+        <img src="./colors.jpg" />
+      </div>
     </div>
   );
-}
-
-const ringsIcon = () => {
-  return (
-    <svg
-      fill="#65694e"
-      version="1.1"
-      id="Layer_1"
-      xmlns="http://www.w3.org/2000/svg"
-      xmlnsXlink="http://www.w3.org/1999/xlink"
-      viewBox="0 0 512.00 512.00"
-      xmlSpace="preserve"
-      width="64px"
-      height="64px"
-      transform="rotate(0)matrix(-1, 0, 0, 1, 0, 0)"
-      stroke="#65694e"
-      strokeWidth="0.00512"
-    >
-      <g id="SVGRepo_bgCarrier" strokeWidth="0"></g>
-      <g
-        id="SVGRepo_tracerCarrier"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      ></g>
-      <g id="SVGRepo_iconCarrier">
-        {" "}
-        <g>
-          {" "}
-          <g>
-            {" "}
-            <path d="M371.769,176.364l30.47-30.47l-21.71-25.265h-52.305l-21.71,25.265l30.47,30.47 c-29.557,3.279-57.658,14.863-80.982,33.507c-23.324-18.644-51.425-30.228-80.982-33.507l30.47-30.47l-21.71-25.265h-52.305 l-21.71,25.265l30.47,30.47C61.471,185.049,0,251.988,0,333.024c0,86.914,70.71,157.625,157.625,157.625 c35.834,0,70.513-12.2,98.375-34.472c27.862,22.272,62.542,34.472,98.375,34.472C441.29,490.649,512,419.938,512,333.024 C512,251.988,450.529,185.049,371.769,176.364z M327.237,145.11l7.97-9.275h38.337l7.969,9.275l-27.138,27.138L327.237,145.11z M130.486,145.11l7.97-9.275h38.337l7.969,9.275l-27.138,27.138L130.486,145.11z M157.625,475.441 c-78.529,0-142.417-63.888-142.417-142.417s63.888-142.417,142.417-142.417c34.337,0,67.503,12.392,93.387,34.894 c8.035,6.984,15.308,14.898,21.618,23.522c17.933,24.508,27.412,53.555,27.412,84.002c0,27.573-7.775,54-22.563,76.946 c-0.192-0.192-0.376-0.39-0.566-0.583c-0.834-0.847-1.659-1.702-2.465-2.574c-0.357-0.386-0.705-0.781-1.055-1.172 c-0.661-0.736-1.315-1.479-1.955-2.233c-0.368-0.433-0.731-0.869-1.092-1.308c-0.618-0.751-1.225-1.513-1.823-2.28 c-0.337-0.432-0.675-0.863-1.005-1.3c-0.655-0.867-1.293-1.748-1.921-2.636c-0.195-0.275-0.396-0.545-0.589-0.823 c10.887-18.81,16.619-40.153,16.619-62.037c0-21.925-5.759-43.301-16.685-62.137l0.061-0.096l-2.58-4.072 c-4.983-7.859-10.817-15.117-17.407-21.662c-2.197-2.182-4.478-4.285-6.839-6.304l-6.234-5.332l-0.161,0.22 c-21.339-15.929-47.37-24.62-74.156-24.62c-68.375,0-124.002,55.628-124.002,124.002s55.627,124.001,124.002,124.001 c26.853,0,52.947-8.733,74.315-24.737c0.095,0.118,0.196,0.231,0.291,0.348c0.539,0.661,1.092,1.311,1.641,1.964 c0.423,0.501,0.841,1.007,1.269,1.503c0.586,0.677,1.185,1.342,1.782,2.01c0.409,0.457,0.812,0.92,1.226,1.372 c0.656,0.716,1.326,1.418,1.995,2.122c0.37,0.389,0.734,0.787,1.108,1.172c0.815,0.841,1.646,1.666,2.48,2.488 c0.228,0.225,0.449,0.456,0.677,0.68C219.606,465.022,189.107,475.441,157.625,475.441z M289.077,246.04 c18.767-14.095,41.689-21.81,65.298-21.81c59.989,0,108.794,48.805,108.794,108.794c0,59.989-48.805,108.792-108.794,108.792 c-23.608,0-46.531-7.715-65.298-21.81c17.142-25.819,26.172-55.735,26.172-86.984C315.249,301.775,306.22,271.858,289.077,246.04z M256,379.489c-6.834-14.454-10.418-30.285-10.418-46.465c0-16.18,3.584-32.012,10.418-46.465 c6.834,14.454,10.418,30.285,10.418,46.465C266.418,349.204,262.834,365.035,256,379.489z M222.923,246.04 c-17.142,25.819-26.172,55.735-26.172,86.984c0,31.248,9.029,61.165,26.172,86.984c-18.767,14.095-41.69,21.81-65.298,21.81 c-59.989,0-108.794-48.804-108.794-108.793S97.636,224.23,157.625,224.23C181.234,224.23,204.156,231.945,222.923,246.04z M354.375,475.441c-34.337,0-67.503-12.392-93.387-34.894c-8.034-6.983-15.308-14.898-21.618-23.522 c-17.933-24.508-27.412-53.555-27.412-84.001c0-27.573,7.775-54.001,22.562-76.946c0.194,0.194,0.38,0.394,0.572,0.589 c0.833,0.845,1.656,1.698,2.46,2.569c0.355,0.384,0.701,0.778,1.05,1.167c0.664,0.739,1.32,1.485,1.964,2.243 c0.364,0.429,0.724,0.862,1.082,1.296c0.622,0.756,1.233,1.522,1.835,2.294c0.334,0.428,0.669,0.855,0.997,1.289 c0.655,0.867,1.292,1.748,1.921,2.635c0.196,0.277,0.398,0.548,0.591,0.827c-10.887,18.81-16.619,40.153-16.619,62.038 c0,21.925,5.759,43.3,16.685,62.136l-0.062,0.096l2.581,4.072c6.643,10.478,14.8,19.888,24.245,27.966l6.234,5.332l0.161-0.221 c21.34,15.929,47.369,24.62,74.156,24.62c68.375,0,124.002-55.626,124.002-124.001s-55.626-124.001-124.002-124.001 c-26.853,0-52.947,8.733-74.315,24.738c-0.095-0.118-0.196-0.231-0.291-0.348c-0.538-0.66-1.089-1.309-1.638-1.96 c-0.424-0.503-0.844-1.011-1.274-1.508c-0.58-0.67-1.173-1.329-1.764-1.989c-0.416-0.464-0.825-0.935-1.246-1.394 c-0.642-0.701-1.298-1.387-1.951-2.075c-0.385-0.406-0.763-0.818-1.153-1.221c-0.781-0.805-1.577-1.594-2.373-2.382 c-0.262-0.259-0.516-0.525-0.78-0.783c24.804-19.075,55.302-29.493,86.786-29.493c78.529,0,142.417,63.888,142.417,142.417 C496.792,411.554,432.904,475.441,354.375,475.441z"></path>{" "}
-          </g>{" "}
-        </g>{" "}
-        <g>
-          {" "}
-          <g>
-            {" "}
-            <rect
-              x="248.396"
-              y="21.351"
-              width="15.208"
-              height="47.344"
-            ></rect>{" "}
-          </g>{" "}
-        </g>{" "}
-        <g>
-          {" "}
-          <g>
-            {" "}
-            <rect
-              x="294.983"
-              y="52.217"
-              transform="matrix(0.4198 -0.9076 0.9076 0.4198 130.5873 323.9224)"
-              width="47.343"
-              height="15.207"
-            ></rect>{" "}
-          </g>{" "}
-        </g>{" "}
-        <g>
-          {" "}
-          <g>
-            {" "}
-            <rect
-              x="185.738"
-              y="36.156"
-              transform="matrix(0.9076 -0.4198 0.4198 0.9076 -7.2537 86.6932)"
-              width="15.207"
-              height="47.343"
-            ></rect>{" "}
-          </g>{" "}
-        </g>{" "}
-      </g>
-    </svg>
-  );
 };
 
-const cameraIcon = () => {
-  return (
-    <svg
-      width="64px"
-      height="64px"
-      viewBox="0 0 24 24"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      stroke="#65694e"
-    >
-      <g id="SVGRepo_bgCarrier" strokeWidth="0"></g>
-      <g
-        id="SVGRepo_tracerCarrier"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      ></g>
-      <g id="SVGRepo_iconCarrier">
-        {" "}
-        <path
-          d="M12 16C13.6569 16 15 14.6569 15 13C15 11.3431 13.6569 10 12 10C10.3431 10 9 11.3431 9 13C9 14.6569 10.3431 16 12 16Z"
-          stroke="#65694e"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        ></path>{" "}
-        <path
-          d="M3 16.8V9.2C3 8.0799 3 7.51984 3.21799 7.09202C3.40973 6.71569 3.71569 6.40973 4.09202 6.21799C4.51984 6 5.0799 6 6.2 6H7.25464C7.37758 6 7.43905 6 7.49576 5.9935C7.79166 5.95961 8.05705 5.79559 8.21969 5.54609C8.25086 5.49827 8.27836 5.44328 8.33333 5.33333C8.44329 5.11342 8.49827 5.00346 8.56062 4.90782C8.8859 4.40882 9.41668 4.08078 10.0085 4.01299C10.1219 4 10.2448 4 10.4907 4H13.5093C13.7552 4 13.8781 4 13.9915 4.01299C14.5833 4.08078 15.1141 4.40882 15.4394 4.90782C15.5017 5.00345 15.5567 5.11345 15.6667 5.33333C15.7216 5.44329 15.7491 5.49827 15.7803 5.54609C15.943 5.79559 16.2083 5.95961 16.5042 5.9935C16.561 6 16.6224 6 16.7454 6H17.8C18.9201 6 19.4802 6 19.908 6.21799C20.2843 6.40973 20.5903 6.71569 20.782 7.09202C21 7.51984 21 8.0799 21 9.2V16.8C21 17.9201 21 18.4802 20.782 18.908C20.5903 19.2843 20.2843 19.5903 19.908 19.782C19.4802 20 18.9201 20 17.8 20H6.2C5.0799 20 4.51984 20 4.09202 19.782C3.71569 19.5903 3.40973 19.2843 3.21799 18.908C3 18.4802 3 17.9201 3 16.8Z"
-          stroke="#65694e"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        ></path>{" "}
-      </g>
-    </svg>
-  );
-};
+function TimerPart() {
+  const titleRef = React.useRef(null);
 
-const plateIcon = () => {
-  return (
-    <svg
-      fill="#65694e"
-      height="64px"
-      width="64px"
-      version="1.1"
-      id="Capa_1"
-      xmlns="http://www.w3.org/2000/svg"
-      xmlnsXlink="http://www.w3.org/1999/xlink"
-      viewBox="0 0 408.113 408.113"
-      xmlSpace="preserve"
-      stroke="#65694e"
-    >
-      <g id="SVGRepo_bgCarrier" strokeWidth="0"></g>
-      <g
-        id="SVGRepo_tracerCarrier"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      ></g>
-      <g id="SVGRepo_iconCarrier">
-        {" "}
-        <path d="M203.174,342.483c-76.33,0-138.429-62.097-138.429-138.424c0-76.33,62.099-138.429,138.429-138.429 c76.327,0,138.424,62.099,138.424,138.429C341.598,280.387,279.501,342.483,203.174,342.483z M203.174,75.63 c-70.815,0-128.429,57.613-128.429,128.429c0,70.813,57.613,128.424,128.429,128.424c70.813,0,128.424-57.611,128.424-128.424 C331.598,133.243,273.987,75.63,203.174,75.63z M35.277,336.753H21.132c-2.762,0-5-2.239-5-5V176.161 C6.603,171.921,0,162.824,0,152.311V82.113c0-2.761,2.238-5,5-5s5,2.239,5,5v65.198h5.468V82.113c0-2.761,2.238-5,5-5s5,2.239,5,5 v65.198h5.474V82.113c0-2.761,2.238-5,5-5s5,2.239,5,5v65.198h5.469V82.113c0-2.761,2.238-5,5-5s5,2.239,5,5v70.198 c0,10.513-6.604,19.61-16.133,23.851v155.591C40.277,334.514,38.039,336.753,35.277,336.753z M26.132,326.753h4.146V178.703h-4.146 V326.753z M10.866,157.311c2.353,6.602,9.236,11.393,17.339,11.393s14.986-4.791,17.339-11.393H10.866z M384.691,335.464h-14.6 c-2.762,0-5-2.239-5-5V79.242c0-2.063,1.268-3.916,3.191-4.662c1.928-0.747,4.108-0.234,5.501,1.29 c1.122,1.229,27.53,30.567,32.242,72.151c4.586,40.435,0.21,107.148,0.021,109.968c-0.176,2.626-2.357,4.667-4.989,4.667h-11.367 v67.808C389.691,333.225,387.453,335.464,384.691,335.464z M375.092,325.464h4.6v-62.808h-4.6V325.464z M375.092,252.656h21.26 c0.916-16.083,3.539-70.003-0.261-103.508c-2.673-23.579-13.229-43.257-20.999-54.955V252.656z M203.174,299.064 c-52.389,0-95.01-42.619-95.01-95.005c0-52.389,42.621-95.01,95.01-95.01c52.386,0,95.005,42.622,95.005,95.01 C298.179,256.445,255.56,299.064,203.174,299.064z M203.174,119.049c-46.875,0-85.01,38.135-85.01,85.01 c0,46.872,38.135,85.005,85.01,85.005c46.872,0,85.005-38.133,85.005-85.005C288.179,157.184,250.046,119.049,203.174,119.049z M104.805,140.978c-0.894,0-1.799-0.239-2.615-0.742c-2.353-1.447-3.085-4.527-1.638-6.879 c16.541-26.879,47.096-41.172,48.388-41.767c2.509-1.156,5.479-0.059,6.634,2.45c1.154,2.507,0.059,5.475-2.447,6.631l0,0 c-0.289,0.134-29.134,13.675-44.059,37.927C108.123,140.133,106.483,140.978,104.805,140.978z"></path>{" "}
-      </g>
-    </svg>
-  );
-};
+  const firstPartOfTimingRef = React.useRef(null);
+  const secondPartOfTimingRef = React.useRef(null);
+  const [timeLeft, setTimeLeft] = React.useState({
+    days: 0,
+    hours: 0,
+    minutes: 0,
+    seconds: 0,
+  });
 
-const clockIcon = () => {
-  return (
-    <svg
-      width="64px"
-      height="64px"
-      viewBox="0 0 24 24"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <g id="SVGRepo_bgCarrier" strokeWidth="0"></g>
-      <g
-        id="SVGRepo_tracerCarrier"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      ></g>
-      <g id="SVGRepo_iconCarrier">
-        {" "}
-        <path
-          d="M12 7V12H15M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z"
-          stroke="#65694e"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        ></path>{" "}
-      </g>
-    </svg>
-  );
-};
-
-const ThirdSection = () => {
-  const photo1Ref = useRef<HTMLDivElement>(null);
-  const photo2Ref = useRef<HTMLDivElement>(null);
-  const heartRef = useRef<HTMLDivElement>(null);
-  const sectionRef = useRef<HTMLDivElement>(null);
-  const [hasAnimated, setHasAnimated] = useState(false);
-
-  useEffect(() => {
+  React.useEffect(() => {
     if (
-      !sectionRef.current ||
-      !photo1Ref.current ||
-      !photo2Ref.current ||
-      !heartRef.current
+      !firstPartOfTimingRef.current ||
+      !secondPartOfTimingRef.current ||
+      !titleRef.current
     )
       return;
 
-    // Set initial state
-    gsap.set([photo1Ref.current, photo2Ref.current], { opacity: 0 });
-    gsap.set(heartRef.current, { opacity: 0, scale: 0 });
+    gsap.set(titleRef.current, {
+      opacity: 0,
+      y: 200,
+    });
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting && !hasAnimated) {
-            setHasAnimated(true);
+    gsap.set(firstPartOfTimingRef.current, {
+      opacity: 0,
+      x: -100,
+    });
 
-            // Fade in both photos
-            gsap.to([photo1Ref.current, photo2Ref.current], {
-              opacity: 1,
-              duration: 1,
-              ease: "power2.out",
-              onComplete: () => {
-                // Rotate photos after fade in completes
-                const tl = gsap.timeline();
+    gsap.set(secondPartOfTimingRef.current, {
+      opacity: 0,
+      x: 100,
+    });
 
-                tl.to(
-                  photo1Ref.current,
-                  {
-                    rotation: -10,
-                    duration: 0.6,
-                    ease: "back.out(1.2)",
-                  },
-                  0
-                );
-
-                tl.to(
-                  photo2Ref.current,
-                  {
-                    rotation: 10,
-                    duration: 0.6,
-                    ease: "back.out(1.2)",
-                  },
-                  0
-                );
-
-                // Show heart after photos rotate
-                tl.to(heartRef.current, {
-                  opacity: 1,
-                  scale: 1,
-                  duration: 0.5,
-                  ease: "back.out(1.7)",
-                });
-              },
-            });
-          }
-        });
+    gsap.to(titleRef.current, {
+      opacity: 1,
+      y: 0,
+      duration: 2,
+      ease: "power2.out",
+      scrollTrigger: {
+        trigger: titleRef.current,
+        start: "top 90%",
+        once: true,
       },
-      { threshold: 0.5 }
-    );
+    });
 
-    observer.observe(sectionRef.current);
+    gsap.to(firstPartOfTimingRef.current, {
+      opacity: 1,
+      x: 0,
+      duration: 2,
+      ease: "power2.out",
+      scrollTrigger: {
+        trigger: firstPartOfTimingRef.current,
+        start: "top 90%",
+        once: true,
+      },
+    });
+
+    gsap.to(secondPartOfTimingRef.current, {
+      opacity: 1,
+      x: 0,
+      duration: 2,
+      ease: "power2.out",
+      scrollTrigger: {
+        trigger: secondPartOfTimingRef.current,
+        start: "top 90%",
+        once: true,
+      },
+    });
 
     return () => {
-      if (sectionRef.current) {
-        observer.unobserve(sectionRef.current);
+      ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
+    };
+  }, []);
+
+  React.useEffect(() => {
+    const weddingDate = new Date("2026-05-02T00:00:00").getTime();
+
+    const calculateTimeLeft = () => {
+      const now = new Date().getTime();
+      const difference = weddingDate - now;
+
+      if (difference > 0) {
+        setTimeLeft({
+          days: Math.floor(difference / (1000 * 60 * 60 * 24)),
+          hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
+          minutes: Math.floor((difference / 1000 / 60) % 60),
+          seconds: Math.floor((difference / 1000) % 60),
+        });
+      } else {
+        setTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0 });
       }
     };
-  }, [hasAnimated]);
+
+    calculateTimeLeft();
+    const timer = setInterval(calculateTimeLeft, 1000);
+
+    return () => clearInterval(timer);
+  }, []);
+
+  const formatNumber = (num: number) => String(num).padStart(2, "0");
+
+  const pluralize = (
+    number: number,
+    one: string,
+    few: string,
+    many: string,
+  ) => {
+    const mod10 = number % 10;
+    const mod100 = number % 100;
+
+    if (mod10 === 1 && mod100 !== 11) {
+      return one;
+    }
+    if (mod10 >= 2 && mod10 <= 4 && (mod100 < 10 || mod100 >= 20)) {
+      return few;
+    }
+    return many;
+  };
 
   return (
     <div
-      ref={sectionRef}
-      className={
-        "flex flex-col min-h-screen bg-zinc-50 font-sans justify-evenly  overflow-hidden"
-      }
-      style={{ backgroundColor: "#e9ddd3" }}
+      className={"flex flex-col text-(--text-clr-1) py-10 gap-10"}
+      style={{ fontFamily: "var(--forum)", lineHeight: 1 }}
     >
-      <div
-        className="flex flex-row px-3 items-end relative"
-        style={{ height: 400 }}
-      >
-        <div
-          ref={heartRef}
-          className="absolute heart"
-          style={{ top: 0, left: "50%", transform: "translate(-50%, 40%)" }}
-        >
-          <HeartIcon />
-        </div>
-
-        <PhotoComp ref={photo1Ref} url="/dmitri_child.jpg" name="Dmitri" />
-        <PhotoComp ref={photo2Ref} url="/olya-child.jpg" name="Olga" />
-      </div>
-      <p
-        className=" text-center text-2xl"
-        style={{ color: "black", fontFamily: "Parisienne" }}
-      >
-        С огромной радостью приглашаем вас на самое главное событие в нашей
-        жизни - нашу свадьбу!
+      <p ref={titleRef} className="text-[64px] max-sm:text-[44px] text-center ">
+        ДО СВАДЬБЫ <br /> ОСТАЛОСЬ
       </p>
 
-      <div className="flex flex-row px-3 items-center justify-center relative gap-1.5">
-        <p
-          className={"text-6xl"}
-          style={{ color: "black", fontFamily: "Parisienne" }}
-        >
-          02
-        </p>
+      <div className={"flex flex-row items-center justify-center gap-6 "}>
         <div
-          style={{
-            width: "2px",
-            height: "60px",
-            backgroundColor: "#65694e",
-            borderRadius: "10px",
-          }}
-        />
-        <p
-          className={"text-6xl"}
-          style={{ color: "black", fontFamily: "Parisienne" }}
+          ref={firstPartOfTimingRef}
+          className={"flex flex-row items-center justify-evenly gap-6 flex-1 "}
         >
-          05
-        </p>
-        <div
-          style={{
-            width: "2px",
-            height: "60px",
-            backgroundColor: "#65694e",
-            borderRadius: "10px",
-          }}
-        />
+          <div className={"flex flex-col items-center justify-center gap-2"}>
+            <p className="max-sm:text-[20px] text-[48px]">
+              {formatNumber(timeLeft.days)}
+            </p>
+            <p className="max-sm:text-[16px] text-[18px]">
+              {pluralize(timeLeft.days, "День", "Дня", "Дней")}
+            </p>
+          </div>
 
-        <p
-          className={"text-6xl"}
-          style={{ color: "black", fontFamily: "Parisienne" }}
+          <div className={"flex flex-col items-center justify-center gap-2"}>
+            <p className="max-sm:text-[20px] text-[48px]">
+              {formatNumber(timeLeft.hours)}
+            </p>
+            <p className="max-sm:text-[16px] text-[18px]">
+              {pluralize(timeLeft.hours, "Час", "Часа", "Часов")}
+            </p>
+          </div>
+        </div>
+        <div
+          ref={secondPartOfTimingRef}
+          className={"flex flex-row items-center justify-evenly gap-6 flex-1"}
         >
-          25
-        </p>
+          <div className={"flex flex-col items-center justify-center gap-2"}>
+            <p className="max-sm:text-[20px] text-[48px]">
+              {formatNumber(timeLeft.minutes)}
+            </p>
+            <p className="max-sm:text-[16px] text-[18px]">
+              {pluralize(timeLeft.minutes, "Минута", "Минуты", "Минут")}
+            </p>
+          </div>
+
+          <div className={"flex flex-col items-center justify-center gap-2"}>
+            <p className="max-sm:text-[20px] text-[48px]">
+              {formatNumber(timeLeft.seconds)}
+            </p>
+            <p className="max-sm:text-[16px] text-[18px]">
+              {pluralize(timeLeft.seconds, "Секунда", "Секунды", "Секунд")}
+            </p>
+          </div>
+        </div>
       </div>
     </div>
   );
-};
+}
 
-const PhotoComp = forwardRef<HTMLDivElement, { url: string; name: string }>(
-  ({ url, name }, ref) => {
-    return (
-      <div
-        ref={ref}
-        style={{
-          backgroundColor: "white",
-          width: 200,
-          height: "80%",
-          boxShadow:
-            "0 4px 6px rgba(0, 0, 0, 0.1), 0 10px 20px rgba(0, 0, 0, 0.15)",
-        }}
-        className="flex flex-col p-2 gap-2"
-      >
-        <div
-          style={{
-            width: "100%",
-            height: "90%",
-            backgroundImage: "url('" + url + "')",
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-            backgroundRepeat: "no-repeat",
-          }}
-        />
-        <p
-          className="text-center text-2xl "
-          style={{ fontFamily: "Parisienne", color: "black" }}
-        >
-          {name}
-        </p>
-      </div>
+function Questionnaire() {
+  const [answer, setAnswer] = React.useState<{
+    name: string;
+    willBeThere?: string;
+    partnerName?: string;
+    drink: string[];
+  }>({
+    name: "",
+    willBeThere: "",
+    partnerName: "",
+    drink: [],
+  });
+
+  const handleConfirm = async () => {
+    const supabase = createClient(
+      "https://vgitafkhtffrhtsoybug.supabase.co",
+      "sb_publishable_2SCY6K40u_VcrRUtqh9RFw_4cyqzuEp",
     );
-  }
-);
 
-function HeartIcon() {
+    await supabase.from("guests").insert([
+      {
+        Name: answer.name,
+        willBeThere: answer.willBeThere === "C Удовольствием приду!",
+        Drinks: answer.drink,
+      },
+    ]);
+  };
+
   return (
-    <svg
-      width="64px"
-      height="64px"
-      viewBox="0 0 16 16"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      stroke=""
+    <div
+      className="flex flex-col text-(--text-clr-1)  w-full max-w-[680px] gap-8 py-10 px-5"
+      style={{
+        fontFamily: "var(--forum)",
+        lineHeight: 1,
+      }}
     >
-      <g id="SVGRepo_bgCaredrediered"></g>
-      <g id="SVGRepo_tredaceredCaredrediered"></g>
-      <g id="SVGRepo_iconCaredrediered">
-        {" "}
-        <path
-          d="M1.24264 8.24264L8 15L14.7574 8.24264C15.553 7.44699 16 6.36786 16 5.24264V5.05234C16 2.8143 14.1857 1 11.9477 1C10.7166 1 9.55233 1.55959 8.78331 2.52086L8 3.5L7.21669 2.52086C6.44767 1.55959 5.28338 1 4.05234 1C1.8143 1 0 2.8143 0 5.05234V5.24264C0 6.36786 0.44699 7.44699 1.24264 8.24264Z"
-          fill="red"
-        ></path>{" "}
-      </g>
-    </svg>
+      <div className="flex flex-col text-center gap-3">
+        <p className="text-[64px] max-sm:text-[44px]">Анкета гостя</p>
+        <p className="text-[18px] max-sm:text-[16px] font-bold">
+          Пожалуйста, подтвердите ваше <br /> присутствие на свадьбе до
+        </p>
+        <p className="text-[54px] max-sm:text-[16px]">10 АПРЕЛЯ 2026 </p>
+      </div>
+
+      <div className="flex flex-col gap-3">
+        <p className={"text-[36px] max-sm:text-[24px] uppercase"}>
+          Ваше имя и фамилия
+        </p>
+        <input
+          type="text"
+          value={answer.name}
+          onChange={(e) => setAnswer({ ...answer, name: e.target.value })}
+          placeholder="Ваше имя и фамилия"
+          className={
+            "text-[24px] py-3 max-sm:text-[18px] w-full border border-(--text-clr-1) placeholder:text-[24px] max-sm:placeholder:text-[18px] px-2"
+          }
+        />
+      </div>
+
+      <ComponentWithVariants
+        value={answer.willBeThere || ""}
+        variants={["C Удовольствием приду!", "К сожалению, не смогу"]}
+        title="Планируете ли вы присутствовать?"
+        onChange={(value) => {
+          setAnswer({ ...answer, willBeThere: value });
+        }}
+      />
+
+      {/* <div className="flex flex-col gap-3">
+        <p className={"text-[36px] max-sm:text-[24px] uppercase"}>
+          ЕСЛИ ВЫ БУДЕТЕ НЕ ОДНИ, заполните поле ниже, пожалуйста
+        </p>
+
+        <input
+          type="text"
+          value={answer.partnerName}
+          placeholder="Имя и фамилия вашего спутника/спутницы"
+          onChange={(e) =>
+            setAnswer({ ...answer, partnerName: e.target.value })
+          }
+          className={
+            "text-[24px] py-3 max-sm:text-[18px] w-full border border-(--text-clr-1) placeholder:text-[24px] max-sm:placeholder:text-[18px] px-2"
+          }
+        />
+      </div> */}
+
+      <ComponentWithVariants
+        value={answer.drink}
+        variants={[
+          "Шампанское",
+          "Белое вино",
+          "Красное вино",
+          "Водка",
+          "Виски",
+          "Джин",
+          "Ром",
+          "Не пью алкоголь",
+        ]}
+        title="ВАШИ ПРЕДПОЧТЕНИЯ"
+        multi={true}
+        onChange={(value) => {
+          setAnswer((prev) => {
+            const added = prev.drink?.find((v) => v === value);
+            if (added) {
+              return {
+                ...prev,
+                drink: prev.drink?.filter((v) => v !== value),
+              };
+            } else {
+              return {
+                ...prev,
+                drink: [...prev.drink, value],
+              };
+            }
+          });
+        }}
+      />
+      <div className="flex flex-row flex-1 justify-center">
+        <div
+          onClick={handleConfirm}
+          className="w-[50%]  min-w-[180px] mt-1.5 flex items-center justify-center gap-3 h-[50px] rounded-[50%] border border-(--text-clr-1) text-(--text-clr-1) cursor-pointer transition-all duration-300 hover:bg-(--text-clr-1) hover:text-white"
+        >
+          <p>ПОДТВЕРДИТЬ</p>
+        </div>
+      </div>
+    </div>
   );
 }
 
-PhotoComp.displayName = "PhotoComp";
+function ComponentWithVariants({
+  variants,
+  title,
+  onChange,
+  value,
+}: {
+  variants: string[];
+  title: string;
+  multi?: boolean;
+  value: string | string[];
+  onChange: (value: string) => void;
+}) {
+  const isString = typeof value === "string";
+
+  return (
+    <div className="flex flex-col gap-3">
+      <p className={"text-[36px] max-sm:text-[24px] uppercase"}>{title}</p>
+      {variants.map((variant, key) => {
+        const isActive = isString ? value === variant : value.includes(variant);
+        return (
+          <div key={key} className="flex flex-row items-center gap-2">
+            <div
+              className={
+                "w-[20px] h-[20px] rounded-md border border-(--text-clr-1) " +
+                (isActive ? "bg-(--text-clr-1)" : "")
+              }
+            />
+            <p
+              onClick={() => onChange(variant)}
+              className="text-[24px] max-sm:text-[18px] cursor-pointer"
+            >
+              {variant}
+            </p>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
