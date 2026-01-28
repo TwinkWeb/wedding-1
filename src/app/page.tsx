@@ -941,7 +941,7 @@ function Questionnaire(props: { handleSuccess?: () => void }) {
   }>({
     name: "",
     willBeThere: "",
-    partners: ["Test"],
+    partners: [""],
     drink: [],
   });
 
@@ -950,12 +950,14 @@ function Questionnaire(props: { handleSuccess?: () => void }) {
   );
 
   const handleAdd = () => {
-    setAnswer((prev) => {
-      return {
-        ...prev,
-        partners: [...prev.partners, ""],
-      };
-    });
+    if (answer.partners.length < 5) {
+      setAnswer((prev) => {
+        return {
+          ...prev,
+          partners: [...prev.partners, ""],
+        };
+      });
+    }
   };
 
   const handleConfirm = async () => {
@@ -1097,15 +1099,19 @@ function Questionnaire(props: { handleSuccess?: () => void }) {
       />
 
       <div className="flex flex-col gap-3">
-        <div className="flex flex-row gap-3">
-          <p className={"text-[36px] max-sm:text-[24px] uppercase"}>
+        <div className="flex flex-row gap-3 items-center">
+          <p className={"text-[36px] max-sm:text-[24px] uppercase flex-1"}>
             ЕСЛИ ВЫ БУДЕТЕ НЕ ОДНИ, заполните поле ниже, пожалуйста
           </p>
 
-          <div className="text-(--text-clr-1)" onClick={handleAdd}>
-            {" "}
-            +{" "}
-          </div>
+          {answer.partners.length < 5 && (
+            <button
+              onClick={handleAdd}
+              className="w-[35px] h-[35px] flex items-center justify-center rounded-full border-2 border-(--text-clr-1) text-(--text-clr-1) text-[28px] leading-none cursor-pointer transition-all duration-300 hover:bg-(--text-clr-1) hover:text-(--page-bg)"
+            >
+              +
+            </button>
+          )}
         </div>
 
         {answer.partners.map((partner, ind) => (
@@ -1300,7 +1306,7 @@ function ConfirmationMobile() {
               </svg>
             </button>
 
-            <div className="p-8 h-full flex flex-col justify-center">
+            <div className="p-8 h-min-full flex flex-col justify-center">
               <Questionnaire
                 handleSuccess={() =>
                   setTimeout(() => setIsModalOpen(false), 2000)
