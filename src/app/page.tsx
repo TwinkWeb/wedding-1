@@ -95,12 +95,7 @@ function FirstSection() {
     <div className="w-full flex flex-col  justify-center items-center sm:min-h-screen relative overflow-hidden ">
       <div
         ref={imgPart}
-        className="flex flex-col bg-(--mobile-bg) py-[30px] relative sm:hidden min-h-[90dvh] w-full"
-        style={{
-          backgroundImage: "url(/first_section.jpg)",
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-        }}
+        className="flex flex-col bg-(--mobile-bg) py-[30px] relative sm:hidden h-[730px] w-full"
       >
         <div
           style={{
@@ -108,6 +103,11 @@ function FirstSection() {
               " linear-gradient(180deg,var(--mobile-bg) 30%, rgba(237, 221, 83, 0) 100%)",
           }}
           className={"absolute top-0 left-0 w-full h-[45%] z-20"}
+        />
+        <img
+          ref={mobileImgPart}
+          src="/first_section.jpg"
+          className="w-auto  sm:hidden"
         />
         <div
           style={{
