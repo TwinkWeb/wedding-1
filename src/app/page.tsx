@@ -1059,7 +1059,7 @@ function Questionnaire(props: { handleSuccess?: () => void }) {
         <p className="text-[18px] max-sm:text-[16px] font-bold">
           Пожалуйста, подтвердите ваше <br /> присутствие на свадьбе до
         </p>
-        <p className="text-[54px] max-sm:text-[16px]">10 АПРЕЛЯ 2026 </p>
+        <p className="text-[54px] max-sm:text-[16px]">20 МАРТА 2026 </p>
       </div>
 
       <div className="flex flex-col gap-3">
@@ -1235,7 +1235,7 @@ function ConfirmationMobile() {
           <p className="text-[14px] text-center">
             Пожалуйста, подтвердите ваше <br /> присутствие на свадьбе до
           </p>
-          <p className="text-[30px]">10 апреля 2026</p>
+          <p className="text-[30px]">20 марта 2026</p>
           <div className="flex flex-row flex-1 justify-center">
             <div
               onClick={handleConfirm}
