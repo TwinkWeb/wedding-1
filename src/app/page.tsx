@@ -19,7 +19,8 @@ export default function Home() {
       <FourthSection />
       <FifthSection />
       <TimerPart />
-      <Questionnaire />
+      {/* <Questionnaire /> */}
+      <AnswerWaiting />
       {/* <div className="w-full fixed bottom-0 left-0 right-0 h-[20px] bg-(--text-clr-1)"></div> */}
     </div>
   );
@@ -93,14 +94,14 @@ function FirstSection() {
   return (
     <div className="w-full flex flex-col  justify-center items-center sm:min-h-screen relative overflow-hidden ">
       <div
-        className="flex flex-col bg-(--mobile-bg) py-[30px] relative sm:hidden min-h-[75vh] w-full"
+        ref={imgPart}
+        className="flex flex-col bg-(--mobile-bg) py-[30px] relative sm:hidden min-h-[90vh] w-full"
         style={{
           backgroundImage: "url(/first_section.jpg)",
           backgroundSize: "cover",
           backgroundPosition: "center",
         }}
       >
-        asf
         <div
           style={{
             background:
@@ -926,7 +927,8 @@ function TimerPart() {
   );
 }
 
-function Questionnaire() {
+function Questionnaire(props: { handleSuccess?: () => void }) {
+  const { handleSuccess } = props;
   const [answer, setAnswer] = React.useState<{
     name: string;
     willBeThere?: string;
@@ -939,24 +941,110 @@ function Questionnaire() {
     drink: [],
   });
 
-  const handleConfirm = async () => {
-    const supabase = createClient(
-      "https://vgitafkhtffrhtsoybug.supabase.co",
-      "sb_publishable_2SCY6K40u_VcrRUtqh9RFw_4cyqzuEp",
-    );
+  const [status, setStatus] = React.useState<"idle" | "loading" | "success">(
+    "idle",
+  );
 
-    await supabase.from("guests").insert([
-      {
-        Name: answer.name,
-        willBeThere: answer.willBeThere === "C Удовольствием приду!",
-        Drinks: answer.drink,
-      },
-    ]);
+  const handleConfirm = async () => {
+    setStatus("loading");
+
+    try {
+      const supabase = createClient(
+        "https://vgitafkhtffrhtsoybug.supabase.co",
+        "sb_publishable_2SCY6K40u_VcrRUtqh9RFw_4cyqzuEp",
+      );
+
+      await supabase.from("guests").insert([
+        {
+          Name: answer.name,
+          willBeThere: answer.willBeThere === "C Удовольствием приду!",
+          Drinks: answer.drink,
+        },
+      ]);
+
+      setStatus("success");
+
+      setTimeout(() => {
+        setStatus("idle");
+        setAnswer({
+          name: "",
+          willBeThere: "",
+          partnerName: "",
+          drink: [],
+        });
+      }, 3000);
+      handleSuccess?.();
+    } catch (error) {
+      setStatus("idle");
+    }
   };
+
+  if (status === "loading") {
+    return (
+      <div
+        className="flex flex-col items-center justify-center text-(--text-clr-1) w-full max-w-[680px] min-h-[400px] gap-6 py-10 transition-all duration-500 ease-in-out"
+        style={{
+          fontFamily: "var(--forum)",
+          lineHeight: 1,
+        }}
+      >
+        <div className="relative w-20 h-20">
+          <div className="absolute inset-0 border-4 border-(--text-clr-1) border-t-transparent rounded-full animate-spin"></div>
+        </div>
+        <p className="text-[24px] text-center animate-pulse">
+          Записываем в журнал...
+        </p>
+      </div>
+    );
+  }
+
+  if (status === "success") {
+    return (
+      <div
+        className="flex flex-col items-center justify-center text-(--text-clr-1) w-full max-w-[680px] min-h-[400px] gap-6 py-10 transition-all duration-500 ease-in-out"
+        style={{
+          fontFamily: "var(--forum)",
+          lineHeight: 1,
+        }}
+      >
+        <div className="relative">
+          <svg
+            className="w-24 h-24 text-(--text-clr-1) animate-[scale-in_0.5s_ease-out]"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <circle
+              cx="12"
+              cy="12"
+              r="10"
+              strokeWidth="2"
+              className="opacity-25"
+            />
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M9 12l2 2 4-4"
+              className="animate-[draw_0.5s_ease-out_0.2s_forwards]"
+              style={{
+                strokeDasharray: 20,
+                strokeDashoffset: 20,
+              }}
+            />
+          </svg>
+        </div>
+        <div className="flex flex-col gap-2 text-center animate-[fade-in_0.5s_ease-out_0.3s_forwards] opacity-0">
+          <p className="text-[32px] font-bold">Спасибо!</p>
+          <p className="text-[20px]">Ваш ответ успешно отправлен</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div
-      className="flex flex-col text-(--text-clr-1)  w-full max-w-[680px] gap-8 py-10 px-5"
+      className="flex flex-col text-(--text-clr-1) w-full max-w-[680px] gap-8 py-10 transition-all duration-500 ease-in-out"
       style={{
         fontFamily: "var(--forum)",
         lineHeight: 1,
@@ -1092,5 +1180,107 @@ function ComponentWithVariants({
         );
       })}
     </div>
+  );
+}
+
+function AnswerWaiting() {
+  return (
+    <div className="flex flex-row justify-center items-center w-full">
+      <div className="hidden md:inline-block">
+        <Questionnaire />
+      </div>
+      <div className="md:hidden w-full">
+        <ConfirmationMobile />
+      </div>
+    </div>
+  );
+}
+
+function ConfirmationMobile() {
+  const [isModalOpen, setIsModalOpen] = React.useState(false);
+
+  const handleConfirm = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
+
+  return (
+    <>
+      <div
+        className="w-full flex flex-row justify-center  py-10"
+        style={{
+          backgroundImage: 'url("/confirmationMobile.jpg")',
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
+      >
+        <div
+          className="flex flex-col w-[80%]  items-center text-(--text-clr-1) gap-6 py-10 border-radius-[5px]"
+          style={{
+            fontFamily: "var(--forum)",
+            lineHeight: 1,
+            backgroundColor: "white",
+          }}
+        >
+          <p className="text-[44px] leading-[0.9] text-center uppercase">
+            Анкета <br /> гостя
+          </p>
+          <p className="text-[14px] text-center">
+            Пожалуйста, подтвердите ваше <br /> присутствие на свадьбе до
+          </p>
+          <p className="text-[30px]">10 апреля 2026</p>
+          <div className="flex flex-row flex-1 justify-center">
+            <div
+              onClick={handleConfirm}
+              className="w-[40%]  min-w-[180px] mt-1.5 flex items-center justify-center gap-3 h-[50px] rounded-[50%] border border-(--text-clr-1) text-(--text-clr-1) cursor-pointer transition-all duration-300 hover:bg-(--text-clr-1) hover:text-white"
+            >
+              <p className="text-[14px]">ПОДТВЕРДИТЬ</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {isModalOpen && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
+          onClick={handleCloseModal}
+        >
+          <div
+            className="relative w-full h-full bg-(--page-bg) overflow-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              onClick={handleCloseModal}
+              className="absolute top-4 right-4 w-10 h-10 flex items-center justify-center text-(--text-clr-1) hover:bg-gray-100 rounded-full transition-colors"
+            >
+              <svg
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <line x1="18" y1="6" x2="6" y2="18" />
+                <line x1="6" y1="6" x2="18" y2="18" />
+              </svg>
+            </button>
+
+            <div className="p-8 h-full flex flex-col justify-center">
+              <Questionnaire
+                handleSuccess={() =>
+                  setTimeout(() => setIsModalOpen(false), 2000)
+                }
+              />
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   );
 }
