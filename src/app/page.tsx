@@ -1167,17 +1167,18 @@ function ComponentWithVariants({
       {variants.map((variant, key) => {
         const isActive = isString ? value === variant : value.includes(variant);
         return (
-          <div key={key} className="flex flex-row items-center gap-2">
+          <div
+            key={key}
+            className="flex flex-row items-center gap-2"
+            onClick={() => onChange(variant)}
+          >
             <div
               className={
                 "w-[20px] h-[20px] rounded-md border border-(--text-clr-1) " +
                 (isActive ? "bg-(--text-clr-1)" : "")
               }
             />
-            <p
-              onClick={() => onChange(variant)}
-              className="text-[24px] max-sm:text-[18px] cursor-pointer"
-            >
+            <p className="text-[24px] max-sm:text-[18px] cursor-pointer">
               {variant}
             </p>
           </div>
