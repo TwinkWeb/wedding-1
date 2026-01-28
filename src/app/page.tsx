@@ -95,7 +95,7 @@ function FirstSection() {
     <div className="w-full flex flex-col  justify-center items-center sm:min-h-screen relative overflow-hidden ">
       <div
         ref={imgPart}
-        className="flex flex-col bg-(--mobile-bg) py-[30px] relative sm:hidden h-[730px] w-full"
+        className="flex flex-col bg-(--mobile-bg) py-[30px] relative sm:hidden h-[620px] w-full"
       >
         <div
           style={{
