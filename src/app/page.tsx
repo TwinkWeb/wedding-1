@@ -936,18 +936,27 @@ function Questionnaire(props: { handleSuccess?: () => void }) {
   const [answer, setAnswer] = React.useState<{
     name: string;
     willBeThere?: string;
-    partnerName?: string;
     drink: string[];
+    partners: string[];
   }>({
     name: "",
     willBeThere: "",
-    partnerName: "",
+    partners: ["Test"],
     drink: [],
   });
 
   const [status, setStatus] = React.useState<"idle" | "loading" | "success">(
     "idle",
   );
+
+  const handleAdd = () => {
+    setAnswer((prev) => {
+      return {
+        ...prev,
+        partners: [...prev.partners, ""],
+      };
+    });
+  };
 
   const handleConfirm = async () => {
     setStatus("loading");
@@ -963,6 +972,7 @@ function Questionnaire(props: { handleSuccess?: () => void }) {
           Name: answer.name,
           willBeThere: answer.willBeThere === "C Удовольствием приду!",
           Drinks: answer.drink,
+          partners: answer.partners,
         },
       ]);
 
@@ -973,7 +983,7 @@ function Questionnaire(props: { handleSuccess?: () => void }) {
         setAnswer({
           name: "",
           willBeThere: "",
-          partnerName: "",
+          partners: [],
           drink: [],
         });
       }, 3000);
@@ -1086,23 +1096,37 @@ function Questionnaire(props: { handleSuccess?: () => void }) {
         }}
       />
 
-      {/* <div className="flex flex-col gap-3">
-        <p className={"text-[36px] max-sm:text-[24px] uppercase"}>
-          ЕСЛИ ВЫ БУДЕТЕ НЕ ОДНИ, заполните поле ниже, пожалуйста
-        </p>
+      <div className="flex flex-col gap-3">
+        <div className="flex flex-row gap-3">
+          <p className={"text-[36px] max-sm:text-[24px] uppercase"}>
+            ЕСЛИ ВЫ БУДЕТЕ НЕ ОДНИ, заполните поле ниже, пожалуйста
+          </p>
 
-        <input
-          type="text"
-          value={answer.partnerName}
-          placeholder="Имя и фамилия вашего спутника/спутницы"
-          onChange={(e) =>
-            setAnswer({ ...answer, partnerName: e.target.value })
-          }
-          className={
-            "text-[24px] py-3 max-sm:text-[18px] w-full border border-(--text-clr-1) placeholder:text-[24px] max-sm:placeholder:text-[18px] px-2"
-          }
-        />
-      </div> */}
+          <div className="text-(--text-clr-1)" onClick={handleAdd}>
+            {" "}
+            +{" "}
+          </div>
+        </div>
+
+        {answer.partners.map((partner, ind) => (
+          <input
+            key={ind}
+            type="text"
+            value={answer.partners[ind]}
+            placeholder="Имя и фамилия вашего спутника/спутницы"
+            className={
+              "text-[24px] py-3 max-sm:text-[18px] w-full border border-(--text-clr-1) placeholder:text-[24px] max-sm:placeholder:text-[18px] px-2"
+            }
+            onChange={(e) =>
+              setAnswer((prev) => {
+                const newPartners = [...prev.partners];
+                newPartners[ind] = e.target.value;
+                return { ...prev, partners: newPartners };
+              })
+            }
+          />
+        ))}
+      </div>
 
       <ComponentWithVariants
         value={answer.drink}
