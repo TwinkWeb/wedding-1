@@ -6,6 +6,7 @@ import React from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { createClient } from "@supabase/supabase-js";
+import Image from "next/image";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -91,18 +92,21 @@ function FirstSection() {
 
   return (
     <div className="w-full flex flex-col  justify-center items-center sm:min-h-screen relative overflow-hidden ">
-      <div className="flex flex-col bg-(--mobile-bg) py-[30px] relative sm:hidden">
+      <div
+        className="flex flex-col bg-(--mobile-bg) py-[30px] relative sm:hidden min-h-[75vh] w-full"
+        style={{
+          backgroundImage: "url(/first_section.jpg)",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
+      >
+        asf
         <div
           style={{
             background:
               " linear-gradient(180deg,var(--mobile-bg) 30%, rgba(237, 221, 83, 0) 100%)",
           }}
           className={"absolute top-0 left-0 w-full h-[45%] z-20"}
-        />
-        <img
-          ref={mobileImgPart}
-          src="/first_section.jpg"
-          className="w-auto  sm:hidden"
         />
         <div
           style={{
