@@ -456,7 +456,7 @@ const ThirdSection = () => {
         >
           <div className="flex flex-col justify-between items-center gap-7 flex-1">
             <p className="text-[16px] text-(--text-clr-1) text-center">
-              Москва ул. Ленинская Слобода,
+              Банкет: ул. Ленинская Слобода,
               <br /> 26, стр. 15
             </p>
 
@@ -470,10 +470,14 @@ const ThirdSection = () => {
             </a>
           </div>
           <div className="flex flex-col justify-between items-center gap-7 flex-1">
-            <p className="text-[16px] text-(--text-clr-1)">ЗАГС</p>
+            <p className="text-[16px] text-(--text-clr-1) text-center">
+              ЗАГС: Малый Харитоньевский пер., д. 10, стр. 1
+            </p>
 
             <a
-              href="https://yandex.ru/maps/213/moscow/house/ulitsa_leninskaya_sloboda_26s15/Z04YcAJhTEcOQFtvfXtxeXRnYg==/?indoorLevel=1&ll=37.651501%2C55.709050&z=18.92"
+              href={
+                "https://yandex.ru/maps/213/moscow/house/maly_kharitonyevskiy_pereulok_10s1/Z04YcANkQUQPQFtvfXt3dHVkYA==/?ll=37.644972%2C55.766026&mode=search&sctx=ZAAAAAgBEAAaKAoSCUVnmUUoYEZAEbTIdr6fZEhAEhIJj3IwmwDDzj8R1IBB0qdVuD8iBgABAgMEBSgKOABAypIHSAFqAnJ1nQHNzMw9oAEAqAEAvQGqBBnkwgEG5vG7kKQBggIX0KfQuNGB0YLRi9C1INC%2F0YDRg9C00YuKAgCSAgCaAgxkZXNrdG9wLW1hcHM%3D&sll=37.644972%2C55.766026&sspn=0.001491%2C0.000693&text=%D0%A7%D0%B8%D1%81%D1%82%D1%8B%D0%B5%20%D0%BF%D1%80%D1%83%D0%B4%D1%8B&z=19.87"
+              }
               target="_blank"
               rel="noopener noreferrer"
               className="w-[50%] min-w-[200px] max-sm:min-w-[150px] mt-1.5 flex items-center justify-center gap-3 h-[50px] rounded-[50%] border border-(--text-clr-1) text-(--text-clr-1) cursor-pointer transition-all duration-300 hover:bg-(--text-clr-1) hover:text-white"
