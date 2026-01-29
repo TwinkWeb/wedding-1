@@ -942,7 +942,7 @@ function Questionnaire(props: { handleSuccess?: () => void }) {
   }>({
     name: "",
     willBeThere: "",
-    partners: [""],
+    partners: ["", ""],
     children: [""],
     drink: [],
   });
@@ -1133,7 +1133,11 @@ function Questionnaire(props: { handleSuccess?: () => void }) {
             key={ind}
             type="text"
             value={answer.partners[ind]}
-            placeholder="Имя и фамилия вашего спутника/спутницы/супруг/супруга"
+            placeholder={
+              ind === 1
+                ? "Имя и фамилия вашего супруга/супруги"
+                : "Имя и фамилия вашего спутника/спутницы"
+            }
             className={
               "text-[24px] py-3 max-sm:text-[18px] w-full border border-(--text-clr-1) placeholder:text-[24px] max-sm:placeholder:text-[18px] px-2"
             }
