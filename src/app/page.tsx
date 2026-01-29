@@ -1133,7 +1133,7 @@ function Questionnaire(props: { handleSuccess?: () => void }) {
             key={ind}
             type="text"
             value={answer.partners[ind]}
-            placeholder="Имя и фамилия вашего спутника/спутницы"
+            placeholder="Имя и фамилия вашего спутника/спутницы/супруг/супруга"
             className={
               "text-[24px] py-3 max-sm:text-[18px] w-full border border-(--text-clr-1) placeholder:text-[24px] max-sm:placeholder:text-[18px] px-2"
             }
