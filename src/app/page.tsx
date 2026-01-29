@@ -938,10 +938,12 @@ function Questionnaire(props: { handleSuccess?: () => void }) {
     willBeThere?: string;
     drink: string[];
     partners: string[];
+    children: string[];
   }>({
     name: "",
     willBeThere: "",
     partners: [""],
+    children: [""],
     drink: [],
   });
 
@@ -955,6 +957,17 @@ function Questionnaire(props: { handleSuccess?: () => void }) {
         return {
           ...prev,
           partners: [...prev.partners, ""],
+        };
+      });
+    }
+  };
+
+  const handleAddChild = () => {
+    if (answer.children.length < 5) {
+      setAnswer((prev) => {
+        return {
+          ...prev,
+          children: [...prev.children, ""],
         };
       });
     }
@@ -1128,6 +1141,42 @@ function Questionnaire(props: { handleSuccess?: () => void }) {
                 const newPartners = [...prev.partners];
                 newPartners[ind] = e.target.value;
                 return { ...prev, partners: newPartners };
+              })
+            }
+          />
+        ))}
+      </div>
+
+      <div className="flex flex-col gap-3">
+        <div className="flex flex-row gap-3 items-center">
+          <p className={"text-[36px] max-sm:text-[24px] uppercase flex-1"}>
+            ЕСЛИ С ВАМИ БУДУТ ДЕТИ, заполните поле ниже, пожалуйста
+          </p>
+
+          {answer.children.length < 5 && (
+            <button
+              onClick={handleAddChild}
+              className="w-[35px] h-[35px] flex items-center justify-center rounded-full border-2 border-(--text-clr-1) text-(--text-clr-1) text-[28px] leading-none cursor-pointer transition-all duration-300 hover:bg-(--text-clr-1) hover:text-(--page-bg)"
+            >
+              +
+            </button>
+          )}
+        </div>
+
+        {answer.children.map((child, ind) => (
+          <input
+            key={ind}
+            type="text"
+            value={answer.children[ind]}
+            placeholder="Имя и возраст ребенка"
+            className={
+              "text-[24px] py-3 max-sm:text-[18px] w-full border border-(--text-clr-1) placeholder:text-[24px] max-sm:placeholder:text-[18px] px-2"
+            }
+            onChange={(e) =>
+              setAnswer((prev) => {
+                const newChildren = [...prev.children];
+                newChildren[ind] = e.target.value;
+                return { ...prev, children: newChildren };
               })
             }
           />

@@ -53,7 +53,12 @@ export const metadata: Metadata = {
   title: "Свадьба Дмитрия и Ольги",
   description: "Приглашение на свадьбу",
   icons: {
-    icon: "/rings.png",
+    icon: [
+      { url: "/rings.png" },
+      { url: "/rings.png", sizes: "32x32", type: "image/png" },
+      { url: "/rings.png", sizes: "16x16", type: "image/png" },
+    ],
+    apple: "/rings.png",
   },
 };
 
