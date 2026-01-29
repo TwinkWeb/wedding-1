@@ -999,6 +999,7 @@ function Questionnaire(props: { handleSuccess?: () => void }) {
           name: "",
           willBeThere: "",
           partners: [],
+          children: [],
           drink: [],
         });
       }, 3000);
